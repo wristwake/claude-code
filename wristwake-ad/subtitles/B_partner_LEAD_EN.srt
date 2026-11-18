@@ -23,33 +23,37 @@ Now you're BOTH awake.
 Only YOU should feel it.
 
 7
-00:00:07,800 --> 00:00:09,700
-WristWake's alarm is a VIBRATION
+00:00:07,800 --> 00:00:09,000
+WristWake's alarm is SILENT.
 
 8
-00:00:09,850 --> 00:00:10,800
-right on your WRIST.
+00:00:09,150 --> 00:00:10,800
+It vibrates on your WRIST.
 
 9
-00:00:11,200 --> 00:00:12,300
-No ringtone blasting
+00:00:11,200 --> 00:00:11,900
+No ringtone.
 
 10
-00:00:12,400 --> 00:00:13,600
-across the room.
+00:00:12,000 --> 00:00:12,700
+No beeping.
 
 11
-00:00:14,200 --> 00:00:15,100
-Just a BUZZ…
+00:00:12,800 --> 00:00:13,700
+No DRAMA.
 
 12
+00:00:14,200 --> 00:00:15,100
+Just a VIBRATION…
+
+13
 00:00:15,500 --> 00:00:16,500
 not a blast.
 
-13
+14
 00:00:17,100 --> 00:00:17,900
 Five colors.
 
-14
+15
 00:00:18,100 --> 00:00:19,800
 Get yours at WRISTWAKE.SHOP
