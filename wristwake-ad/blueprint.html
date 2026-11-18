@@ -1,0 +1,696 @@
+<title>WristWake Ad Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: single reading column with a sticky section index; production tables scroll inside their own frames. */
+:root{
+  --bg:#efeeeb; --surface:#ffffff; --fg:#1d1c1a; --muted:#6a655d; --line:#d9d5ce;
+  --accent:#a8690a; --accent-soft:#f6e6c8; --ai:#4e6a8c; --ai-soft:#dfe7f1; --prod:#3f3c38; --prod-soft:#e4e1dc;
+  --warn:#9c3b23; --warn-soft:#f6e1da; --ok:#2f6b45; --ok-soft:#dcefe2;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif; --f-body:"Inter",system-ui,-apple-system,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141413; --surface:#1d1c1a; --fg:#ece9e3; --muted:#a39d93; --line:#34322e;
+  --accent:#f0b54a; --accent-soft:#3a2d14; --ai:#9db8db; --ai-soft:#1f2a38; --prod:#d6d1c9; --prod-soft:#2c2a27;
+  --warn:#f09a80; --warn-soft:#3a201a; --ok:#8fd0a5; --ok-soft:#18301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141413; --surface:#1d1c1a; --fg:#ece9e3; --muted:#a39d93; --line:#34322e;
+  --accent:#f0b54a; --accent-soft:#3a2d14; --ai:#9db8db; --ai-soft:#1f2a38; --prod:#d6d1c9; --prod-soft:#2c2a27;
+  --warn:#f09a80; --warn-soft:#3a201a; --ok:#8fd0a5; --ok-soft:#18301f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-body);margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 80px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(22px,3.6vw,28px);font-weight:800;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 11.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono);font-size:.88em}
+.muted{color:var(--muted)}
+header.top{display:grid;gap:14px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.clock{font:600 13px var(--f-mono);color:var(--accent)}
+nav.idx{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.idx a{display:inline-block;font:500 13px var(--f-body);color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:999px}
+nav.idx a:hover,nav.idx a:focus-visible{background:var(--surface);color:var(--fg);outline:none}
+section{display:grid;gap:16px;padding-block:34px;border-bottom:1px solid var(--line);scroll-margin-top:56px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:10px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-color:var(--ok);background:var(--ok-soft)}
+ul,ol{margin:0;padding-left:20px;display:grid;gap:5px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--line)}
+th{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+td.tc{font-family:var(--f-mono);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.wide table{min-width:900px}
+.tag{display:inline-block;font:600 10.5px/1 var(--f-mono);letter-spacing:.06em;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.tag.ai{background:var(--ai-soft);color:var(--ai)}
+.tag.prod{background:var(--prod-soft);color:var(--prod)}
+.tag.bl{background:var(--accent-soft);color:var(--accent)}
+.tag.bad{background:var(--warn-soft);color:var(--warn)}
+.tag.good{background:var(--ok-soft);color:var(--ok)}
+/* storyboard bar: widths are seconds out of 20.5 */
+.bar{display:flex;height:54px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.bar div{display:flex;align-items:flex-end;padding:4px 5px;font:600 10px/1.1 var(--f-mono);border-right:1px solid var(--bg);min-width:0;overflow:hidden}
+.bar .a{background:var(--ai-soft);color:var(--ai)} .bar .p{background:var(--prod-soft);color:var(--prod)}
+.ticks{display:flex;justify-content:space-between;font:11px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.prompt{position:relative;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 12px 12px;font:12.5px/1.55 var(--f-mono);white-space:pre-wrap;word-break:break-word}
+.copy{position:absolute;top:8px;right:8px;font:600 11px var(--f-body);background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
+.copy:focus-visible{outline:2px solid var(--accent)}
+.prompt .body{display:block;padding-right:56px}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.w{display:grid;gap:2px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+.w b{font:600 13px var(--f-body)} .w i{font:normal 10.5px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.w.hl{border-color:var(--accent);background:var(--accent-soft)} .w.hl b{color:var(--accent)}
+.vo{display:grid;gap:10px}
+.vo .line{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:baseline}
+.vo .line .tc{color:var(--muted)}
+.vo .line p{font-size:16px}
+.vo em{font-style:normal;color:var(--accent);font-weight:600}
+.dir{font-size:12.5px;color:var(--muted);display:block}
+.check li{list-style:none;margin-left:-20px;display:grid;grid-template-columns:22px 1fr;gap:6px}
+.check li::before{content:"";width:13px;height:13px;border:1.5px solid var(--muted);border-radius:3px;margin-top:5px}
+a{color:var(--accent)}
+@media (max-width:560px){.vo .line{grid-template-columns:1fr;gap:2px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">WristWake · 9:16 performance ad · production v1 (no Blender)</span>
+  <h1>WristWake Ad Blueprint</h1>
+  <p>A 20-second ad that leads with the partner angle, made on an iPad from your five product images, AI-generated bedroom scenes, an AI voiceover and CapCut. The product clips are already rendered. You generate four AI scenes and the voice, then assemble everything in CapCut.</p>
+  <span class="clock">23:59 → 06:00 · buzz, not a blast</span>
+</header>
+
+<nav class="idx" aria-label="Sections">
+  <a href="#decision">Decision</a><a href="#money">Unit economics</a><a href="#angles">Angles &amp; hooks</a><a href="#board">Storyboard</a><a href="#kit">Clip kit</a><a href="#ai">AI scenes</a><a href="#voice">Voiceover</a><a href="#music">Music</a><a href="#sfx">Sound FX</a><a href="#subs">Captions</a><a href="#edit">CapCut edit</a><a href="#mix">Mix &amp; export</a><a href="#variants">Variants</a><a href="#blender">Blender upgrades</a><a href="#test">Testing</a><a href="#rules">Truth &amp; disclosure</a><a href="#order">Production order</a><a href="#de">German version</a>
+</nav>
+
+<!-- ───────────────── DECISION ───────────────── -->
+<section id="decision">
+  <span class="eyebrow">Summary</span>
+  <h2>What I decided, and what's blocking</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Lead concept: "Your alarm is also their alarm"</h3>
+      <p>The ad leads with the partner angle (Variant B). Two variants run beside it: Oversleeping (A) and Product demo (C). All three share the same footage.</p>
+      <p class="muted">A silent wrist alarm obviously helps when someone sleeps next to you. "I sleep through every alarm" is easier to relate to, but it asks the viewer to believe a vibration will wake a heavy sleeper. We can't support that claim, so A is a test, not the lead. Your store already tags "partner nicht wecken" and "schichtarbeiter", which fits this choice.</p>
+    </div>
+    <div class="panel">
+      <h3>Already done</h3>
+      <ul>
+        <li>14 product motion clips (1080×1920, 30 fps) made only from your real images: lights-on reveal, vibration pulse in all 5 colors, display close-up with a glass glint, strap pan, color carousel, and end cards in all 5 colors.</li>
+        <li>5 clean 9:16 product plates.</li>
+        <li>Subtitle files (.srt) and word-level timing for all 3 variants.</li>
+      </ul>
+      <p class="muted mono">Repo folder: wristwake-ad/ on branch claude/wristwake-ad-production-a00q0x</p>
+    </div>
+  </div>
+  <div class="callout warn">
+    <h3>Three facts I need before you spend on ads</h3>
+    <ol>
+      <li><b>VAT status.</b> Are you a Kleinunternehmer (§19 UStG), or do you charge 19% VAT? At €24.99 this decides whether you keep €5.17 or €1.18 per order. See below.</li>
+      <li><b>How the alarm actually works.</b> Is the alarm vibration only, or does it also beep? How do you set it: buttons on the band or an app? How does it charge, and how long does the battery last? Your product page lists none of this. The script only says "vibration on your wrist", so this answer controls one line of voiceover. Send me the CJ listing link or the spec sheet.</li>
+      <li><b>Market and language.</b> The store and product copy are German. An English ad that sends Germans to a German page is a weaker test. I wrote the English master as you asked and added a German voiceover version at the end. It costs nothing extra to produce.</li>
+    </ol>
+  </div>
+  <div class="callout">
+    <h3>The biggest risk isn't the video</h3>
+    <p>Your product page has two lines of copy and no specs, no "how it works", no delivery time and no FAQ. If paid traffic lands there, a good ad still won't convert. Fix the page before launch (checklist in <a href="#test">Testing</a>). I can draft the German page copy next.</p>
+  </div>
+</section>
+
+<!-- ───────────────── MONEY ───────────────── -->
+<section id="money">
+  <span class="eyebrow">Unit economics</span>
+  <h2>Can paid ads work at €24.99?</h2>
+  <p>Inputs: product + shipping €19.00. Payment fee estimated at 2.1% + €0.30 per order (check Shopify → Settings → Payments for your real rate). Not included: returns, chargebacks, apps, and your time. Contribution = net revenue − product − fees, before ads. Break-even CPA = contribution. Break-even ROAS = price ÷ contribution.</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Price</th><th>VAT case</th><th class="num">Net rev.</th><th class="num">Fees</th><th class="num">Contribution = BE CPA</th><th class="num">BE ROAS</th></tr></thead>
+    <tbody>
+      <tr><td class="num">€24.99</td><td>Kleinunternehmer</td><td class="num">24.99</td><td class="num">0.82</td><td class="num">€5.17</td><td class="num">4.84</td></tr>
+      <tr><td class="num">€24.99</td><td>19% VAT</td><td class="num">21.00</td><td class="num">0.82</td><td class="num"><span class="tag bad">€1.18</span></td><td class="num">21.3</td></tr>
+      <tr><td class="num">€29.99</td><td>Kleinunternehmer</td><td class="num">29.99</td><td class="num">0.93</td><td class="num">€10.06</td><td class="num">2.98</td></tr>
+      <tr><td class="num">€29.99</td><td>19% VAT</td><td class="num">25.20</td><td class="num">0.93</td><td class="num">€5.27</td><td class="num">5.69</td></tr>
+      <tr><td class="num">€34.99</td><td>Kleinunternehmer</td><td class="num">34.99</td><td class="num">1.03</td><td class="num"><span class="tag good">€14.96</span></td><td class="num">2.34</td></tr>
+      <tr><td class="num">€34.99</td><td>19% VAT</td><td class="num">29.40</td><td class="num">1.03</td><td class="num">€9.37</td><td class="num">3.73</td></tr>
+      <tr><td class="num">€39.99</td><td>19% VAT</td><td class="num">33.61</td><td class="num">1.14</td><td class="num">€13.47</td><td class="num">2.97</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout warn">
+    <p><b>Recommendation:</b> don't run paid ads at €24.99. With VAT, one sale leaves about €1 to pay for ads. With no VAT, you'd need a ROAS near 5 on cold traffic. Move to <b>€34.99 before the paid test</b>. Leave the price out of the video so the same ad works at any price you test. Also ask CJ for a cheaper shipping option or a quote for 10+ units. €19 landed cost is high for this kind of band, and every euro you save goes straight to break-even CPA.</p>
+  </div>
+</section>
+
+<!-- ───────────────── ANGLES ───────────────── -->
+<section id="angles">
+  <span class="eyebrow">Audience</span>
+  <h2>Segments, angles and five hooks</h2>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>Segment</th><th>Problem</th><th>Wants</th><th>Main objection</th><th>Product fit</th><th>Claim credibility</th></tr></thead>
+    <tbody>
+      <tr><td><b>Couples on different schedules</b></td><td>My alarm wakes my partner; guilt and friction every morning</td><td>Get up without waking them</td><td>"Will I even feel it?"</td><td><span class="tag good">High</span></td><td>High. Silent vibration speaks for itself</td></tr>
+      <tr><td><b>Shift workers / early risers</b></td><td>5 a.m. starts while the household sleeps</td><td>Quiet, reliable wake-up</td><td>Reliability; battery</td><td><span class="tag good">High</span></td><td>High (overlaps with couples)</td></tr>
+      <tr><td><b>Shared rooms</b> (WG, dorms, hostels, travel)</td><td>Waking roommates</td><td>Not being "that person"</td><td>Price vs. a free phone alarm</td><td><span class="tag good">High</span></td><td>High</td></tr>
+      <tr><td><b>People who dislike loud alarms</b></td><td>Jarring start to the day</td><td>A calmer morning ("Wach auf. Ohne Drama.")</td><td>"My phone has gentle alarms"</td><td><span class="tag">Medium</span></td><td>Medium. Comes down to taste</td></tr>
+      <tr><td><b>Oversleepers / snoozers</b></td><td>Sleep through or snooze alarms; late for work or class</td><td>Actually get up on time</td><td>"If a loud alarm fails, why would a buzz work?"</td><td><span class="tag">Medium</span></td><td><span class="tag bad">Low–medium</span> Must not promise results</td></tr>
+      <tr><td><b>Students / young professionals</b></td><td>Mix of the above</td><td>Cheap fix, looks fine</td><td>Price; looks basic</td><td><span class="tag">Medium</span></td><td>Depends on angle</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">Your store also tags "schwerhörig" (hard of hearing). Vibrating alarms really do serve that group, but it needs careful, respectful messaging and possibly medical-device considerations. Keep it out of this first ad. It may be a good organic or SEO page later.</p>
+
+  <h3>Top three angles</h3>
+  <ol>
+    <li><b>Partner / shared room.</b> "Wake up without waking them." <span class="tag good">Lead</span></li>
+    <li><b>Alarm placement for snoozers.</b> "Your alarm is in the wrong place. Put it on your wrist." This avoids promising that it will wake heavy sleepers.</li>
+    <li><b>Product demo / novelty.</b> "This alarm doesn't ring." Cheapest to make, and it shows whether curiosity alone drives clicks.</li>
+  </ol>
+
+  <h3>Five hooks</h3>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>#</th><th>Opening line</th><th>First frame</th><th>Audience</th><th>Trigger</th><th>Why it might work</th><th>Weakness</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>"Your 6 AM alarm… is also their 6 AM alarm."</b> <span class="tag good">Lead</span></td><td>Dark bedroom, phone screen blazing on the nightstand, alarm already ringing at frame 0</td><td>Couples, shift workers</td><td>Guilt, recognition</td><td>Instant "that's us"; the sound does the work in second 1</td><td>Only for people who share a bed</td></tr>
+      <tr><td>2</td><td>"Your alarm wakes up everyone… except you."</td><td>Partner wide awake and glaring; he sleeps through it</td><td>Snoozers + couples</td><td>Humor, recognition</td><td>Combines both problems; funny</td><td>Implies a heavy-sleeper fix we can't promise</td></tr>
+      <tr><td>3</td><td>"POV: you set five alarms… and still woke up late."</td><td>Screen recording of a 5-alarm list (6:00 to 6:20)</td><td>Students, snoozers</td><td>Self-recognition</td><td>Very native "POV" format; free to shoot</td><td>Credibility of the fix (see A)</td></tr>
+      <tr><td>4</td><td>"This alarm doesn't ring."</td><td>Vibration-pulse clip, silence then a buzz</td><td>Broad, curious</td><td>Curiosity</td><td>Product shown in second 0</td><td>Looks more like an ad; less story</td></tr>
+      <tr><td>5</td><td>"Why are we still waking up to this?"</td><td>Close-up of a phone alarm, harsh sound</td><td>Loud-alarm haters</td><td>Irritation</td><td>The sound hook stops scrolling</td><td>Vague; doesn't say who it's for</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout">
+    <p><b>About your original "I used to sleep through every alarm":</b> spoken in first person by an AI character, it sounds like a customer testimonial from someone who doesn't exist. Your own rules rule that out. All scripts here use second person or "POV", spoken by a brand narrator.</p>
+  </div>
+</section>
+
+<!-- ───────────────── STORYBOARD ───────────────── -->
+<section id="board">
+  <span class="eyebrow">Variant B · lead · 20.5 s</span>
+  <h2>Storyboard and shot list</h2>
+  <div class="bar" role="img" aria-label="Timeline of 11 shots across 20.5 seconds; AI scenes at 0–5.6 s and 10.6–14 s, product clips elsewhere">
+    <div class="a" style="flex:1.4">1</div><div class="a" style="flex:1.4">2</div><div class="a" style="flex:1.4">3</div><div class="a" style="flex:1.4">4</div>
+    <div class="p" style="flex:2.0">5 reveal</div><div class="p" style="flex:3.0">6 vibration</div><div class="a" style="flex:3.4">7 calm wake</div>
+    <div class="p" style="flex:1.5">8</div><div class="p" style="flex:1.5">9</div><div class="p" style="flex:1.8">10</div><div class="p" style="flex:1.7">11 CTA</div>
+  </div>
+  <div class="ticks"><span>0s</span><span>5</span><span>10</span><span>15</span><span>20.5</span></div>
+  <div class="legend"><span><span class="tag ai">AI</span> AI-generated scene (Kling)</span><span><span class="tag prod">PRODUCT</span> pre-rendered clip from your photos</span><span><span class="tag bl">BLENDER↑</span> upgrade later</span></div>
+
+  <div class="panel">
+    <h3>Continuity bible (applies to every AI shot)</h3>
+    <ul>
+      <li><b>Him (Leo, 26):</b> light-olive skin, short slightly messy dark-brown hair, light stubble, heather-grey crew-neck T-shirt. No watch or jewelry.</li>
+      <li><b>Her (Mia, 25):</b> fair skin, light freckles, shoulder-length dark-blonde hair loosely tied, sage-green oversized T-shirt.</li>
+      <li><b>Room:</b> small European apartment bedroom, white walls, light-oak nightstand on his side with a smartphone and a small white ceramic lamp, oatmeal linen duvet, white pillows, sheer curtains on her side.</li>
+      <li><b>Light:</b> before the product reveal, cool blue pre-dawn light plus phone glow. After the reveal, soft warm sunrise light. The color shift carries the story.</li>
+      <li><b>Product rule:</b> wrists stay under the duvet or out of frame in every AI shot. The band appears only in your real product clips, so no AI-invented WristWake ever exists.</li>
+    </ul>
+  </div>
+
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>#</th><th>Time</th><th>Source</th><th>Visual · framing · movement</th><th>Voiceover</th><th>On-screen text</th><th>Sound</th><th>Music</th><th>Out</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="tc">0.0–1.4</td><td><span class="tag ai">AI-1</span></td><td>ECU of the phone on the nightstand, screen blazing; couple blurred behind. Static with slight handheld drift. Blue pre-dawn. Tone: jolt.</td><td>"Your 6 AM alarm…"</td><td>Caption</td><td>Generic phone alarm, loud, from frame 0. Room tone.</td><td>None</td><td>Hard cut</td></tr>
+      <tr><td>2</td><td class="tc">1.4–2.8</td><td><span class="tag ai">AI-2a</span></td><td>MCU at pillow height: Mia's eyes open, annoyed; Leo asleep behind her. Locked-off.</td><td>"…is also THEIR 6 AM alarm."</td><td>THEIR highlighted</td><td>Alarm continues (muffled 20%). Sheet rustle.</td><td>None</td><td>Hard cut on "alarm"</td></tr>
+      <tr><td>3</td><td class="tc">2.8–4.2</td><td><span class="tag ai">AI-2b</span></td><td>Same take, later: Mia pulls the duvet over her head. Leo stirs.</td><td>"Snooze. Again."</td><td>Caption</td><td>Tap on glass at 2.9; alarm cuts dead. Fabric whoosh.</td><td>None</td><td>Hard cut</td></tr>
+      <tr><td>4</td><td class="tc">4.2–5.6</td><td><span class="tag ai">AI-3</span></td><td>Top-down: both lying awake, staring at the ceiling; she turns to look at him. Very slow push-in.</td><td>"Now you're BOTH awake."</td><td>BOTH highlighted</td><td>Faint clock tick (tension)</td><td>Low filtered pad optional</td><td>Dip to black, 4 frames</td></tr>
+      <tr><td>5</td><td class="tc">5.6–7.6</td><td><span class="tag prod">01 reveal</span></td><td>Black band in the studio; "lights on" ramp, slow push-in.</td><td>"Only YOU should feel it."</td><td>YOU highlighted</td><td>Lamp-switch click at 5.6; soft riser 5.3→5.6</td><td><b>Music enters 5.6</b></td><td>Cut on beat</td></tr>
+      <tr><td>6</td><td class="tc">7.6–10.6</td><td><span class="tag prod">02 vibration</span> <span class="tag bl">BLENDER↑</span></td><td>Three vibration bursts with motion arcs (labeled a stylized graphic).</td><td>"WristWake's alarm is a VIBRATION — right on your WRIST."</td><td>Keywords highlighted</td><td>Three buzzes at 7.85 / 8.75 / 9.65</td><td>Ducked under VO</td><td>Soft cross-dissolve, 6 frames</td></tr>
+      <tr><td>7</td><td class="tc">10.6–14.0</td><td><span class="tag ai">AI-4</span> <span class="tag bl">BLENDER↑</span></td><td>Warm sunrise. Leo opens his eyes calmly and slides out of bed; Mia keeps sleeping. Slow lateral drift.</td><td>"No ringtone blasting across the room."</td><td>Caption</td><td>Morning birds (faint), duvet rustle at 12.0</td><td>Ducked</td><td>Hard cut</td></tr>
+      <tr><td>8</td><td class="tc">14.0–15.5</td><td><span class="tag prod">03 display</span></td><td>Display close-up (shows 23:59, which fits "set it at night"); glint passes across the glass.</td><td>"Just a BUZZ…"</td><td>BUZZ highlighted</td><td>Soft shimmer synced to glint</td><td>Ducked</td><td>Hard cut</td></tr>
+      <tr><td>9</td><td class="tc">15.5–17.0</td><td><span class="tag prod">04 strap</span></td><td>Pan down from the buckle across the strap holes (2× speed).</td><td>"…not a blast."</td><td>Caption</td><td>Small whoosh at 15.5</td><td>Swells toward the CTA</td><td>Hard cut on beat</td></tr>
+      <tr><td>10</td><td class="tc">17.0–18.8</td><td><span class="tag prod">05 carousel</span></td><td>Black → white → blue → pink → green, match-cut (1.67× speed).</td><td>"Five colors."</td><td>Caption</td><td>Soft click on each color cut</td><td>Full level in VO gaps</td><td>Hard cut</td></tr>
+      <tr><td>11</td><td class="tc">18.8–20.5</td><td><span class="tag prod">06 end card</span></td><td>Hero shot, product high in frame, clean lower third.</td><td>"Get yours at WRISTWAKE.SHOP"</td><td>Big CTA: <b>wristwake.shop</b></td><td>Soft low "thump" at 18.8</td><td>Resolve; fade 19.8→20.5</td><td>End</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">No logo intro. The brand name is spoken first at 7.8 s, once the viewer already wants the solution. Small disclosure text appears in shots 1–4 and 7 (see <a href="#rules">Truth &amp; disclosure</a>).</p>
+</section>
+
+<!-- ───────────────── KIT ───────────────── -->
+<section id="kit">
+  <span class="eyebrow">Ready now</span>
+  <h2>Product clip kit</h2>
+  <p>Every frame comes from your five official images. I only moved a virtual camera, adjusted brightness, and added stylized arcs and a glint. Nothing about the product was redrawn. All clips are 1080×1920, 30 fps, H.264, no audio.</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>File (wristwake-ad/clips/)</th><th class="num">Length</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">01_reveal_lights-on_black.mp4</td><td class="num">3.5 s</td><td>Product reveal (shot 5)</td></tr>
+      <tr><td class="mono">02_vibration-pulse_{black,white,blue,pink,green}.mp4</td><td class="num">3.0 s</td><td>Vibration demo (shot 6; Variant C opener)</td></tr>
+      <tr><td class="mono">03_display-closeup-glint_black.mp4</td><td class="num">3.0 s</td><td>Display close-up (shot 8)</td></tr>
+      <tr><td class="mono">04_strap-buckle-pan_black.mp4</td><td class="num">3.0 s</td><td>Strap detail (shot 9; Variant C)</td></tr>
+      <tr><td class="mono">05_color-carousel_5colors.mp4</td><td class="num">3.0 s</td><td>Color carousel, 0.6 s per color (shot 10)</td></tr>
+      <tr><td class="mono">06_hero-endcard_{black,white,blue,pink,green}.mp4</td><td class="num">4.0 s</td><td>CTA end card; lower third left clear for text (shot 11)</td></tr>
+      <tr><td class="mono">plates/plate_9x16_*.png</td><td class="num">still</td><td>For your own CapCut keyframe moves</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted"><b>Getting them onto the iPad:</b> open the GitHub branch in Safari, open <span class="mono">wristwake-ad/WristWake_ad_kit_v1.zip</span> (all clips, plates and subtitles in one file), tap "Download raw", unzip it in Files, and import into CapCut.</p>
+  <div class="callout"><p>The arcs in clip 02 are an illustration of vibration, not footage of the device moving. That's standard in ads, but don't describe it as a real recording.</p></div>
+</section>
+
+<!-- ───────────────── AI ───────────────── -->
+<section id="ai">
+  <span class="eyebrow">AI scenes · 4 for the lead, +1 for Variant A</span>
+  <h2>Character stills, then image-to-video</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Workflow (all on iPad)</h3>
+      <ol>
+        <li><b>Stills:</b> Gemini app (free tier, image generation). Make K1 first. Then build every other still by <i>editing</i> it ("same couple, same room, now…"). Editing keeps faces consistent far better than separate prompts.</li>
+        <li><b>Motion:</b> Kling AI iOS app, image-to-video, 5 s, 9:16, using each still as the start frame. Turn off any generated audio, because sound comes from your own library.</li>
+        <li>Budget at most 2 generations per shot, so about 10–12 in total. Pick the best take and use only 1.4–3.4 s of it.</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3>Why Kling, and what to verify</h3>
+      <p>It has an iPad app, strong image-to-video with consistent faces, and one paid month removes the watermark. You need one video tool, not several. <b>Verify in the app before paying:</b> the current price, that your plan exports without a watermark, and that commercial use is allowed. My pricing knowledge may be out of date. Google Veo (via Gemini) is a good alternative. Check whether your tier adds a visible watermark.</p>
+    </div>
+  </div>
+
+  <h3>Still prompts (Gemini)</h3>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">K1 · Vertical 9:16 realistic smartphone photo, before dawn. Close-up of a smartphone lying face-up on a light-oak nightstand, its screen glowing bright white as if an alarm is ringing (screen content blurred and unreadable, no logos). A small white ceramic lamp, switched off, beside it. In soft focus in the background: a young couple asleep in a bed with an oatmeal linen duvet and white pillows, both arms under the duvet. Cool blue window light, glow from the phone screen. Small European apartment bedroom, white walls. Natural grain, no cinematic grading, no text.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">K2 · Edit of K1 · Same couple, same bedroom, same light. Medium close-up from pillow height: the woman (25, fair skin, light freckles, shoulder-length dark-blonde hair loosely tied, sage-green oversized T-shirt) lies on her side facing the camera, eyes open in the dark, visibly annoyed. Behind her the man (26, light-olive skin, short messy dark-brown hair, light stubble, heather-grey T-shirt) is still asleep, face half in the pillow. All arms and wrists under the duvet. Pre-dawn blue light, faint phone glow from the right. Realistic, natural skin texture.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">K3 · Edit of K2 · Same couple, same bedroom. Camera directly above the bed looking down: both lying on their backs, awake, staring at the ceiling, tired. Duvet pulled up to their chests, arms and wrists under the duvet. Grey-blue early-morning light. Realistic, unposed.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">K4 · Edit of K2 · Same couple, same bedroom, later: soft warm sunrise light through sheer curtains. Medium side shot: the man lies on his back, eyes just opening, calm and relaxed. The woman beside him is peacefully asleep, turned away from him. Arms and wrists under the duvet. Gentle light, realistic, unposed.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">K5 (Variant A) · Edit of K2 · Same man alone in the same bed, bright late-morning daylight flooding the room, duvet tangled. He sits up abruptly holding his phone, screen facing away from the camera, worried expression. Wrists hidden by the duvet or out of frame. Realistic smartphone photo.</span></div>
+
+  <h3>Motion prompts (Kling · image-to-video · 5 s · 9:16)</h3>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">AI-1 (start frame K1) · Static close-up with very slight natural handheld drift. The phone screen pulses brighter and dimmer as if an alarm is ringing. In the blurred background the man shifts slightly under the duvet. Nothing else moves. Real-time speed, realistic motion.
+Negative: text, logos, readable screen UI, watches, bracelets, extra fingers, plastic skin, slow motion, dramatic camera moves, lens flares.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">AI-2 (start frame K2) · Locked-off camera at pillow height. The woman's eyes are open; she frowns, exhales slowly through her nose, then pulls the duvet up over her head. Behind her, the man stirs slightly but stays asleep. Subtle, natural, real-time facial acting. Hands stay under the duvet.
+Negative: exaggerated expressions, talking, hands near the camera, watches, bracelets, distorted anatomy, plastic skin, slow motion.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">AI-3 (start frame K3) · Top-down locked camera with an extremely slow push-in. Both blink and stare at the ceiling. After two seconds the woman slowly turns her head to look at the man, unimpressed; he glances back with a small apologetic look. Subtle facial acting only, no talking.
+Negative: smiling, laughing, big gestures, arms above the duvet, watches, plastic skin, warping faces.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">AI-4 (start frame K4) · Very slow lateral camera drift. The man opens his eyes calmly, takes one quiet breath, then carefully slides out of bed on his side, lifting the duvet gently so it doesn't disturb her. The woman stays asleep, breathing softly. Warm sunrise light, faint dust in the light beam. Calm, real-time motion.
+Negative: wrists or arms visible in close-up, watches, bracelets, waking the woman, fast motion, plastic skin, morphing faces.</span></div>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">AI-5 (start frame K5, Variant A) · Handheld with slight natural shake. He looks at the phone, eyes widen, he exhales and runs one hand through his hair, then swings his legs out of bed. Realistic, not exaggerated.
+Negative: readable phone screen, watches, comedic overacting, distorted hands, slow motion.</span></div>
+  <p class="muted">Rejection checklist for each take: faces stay the same, five fingers, no watch or bracelet appears, no warping at the edges of the duvet, the eyes move naturally. If a take fails on hands, cut before the hands move. Don't pay for a third take.</p>
+</section>
+
+<!-- ───────────────── VOICE ───────────────── -->
+<section id="voice">
+  <span class="eyebrow">Voiceover · 47 words · about 16 s of speech in 20 s</span>
+  <h2>Script and voice direction</h2>
+  <div class="panel vo">
+    <div class="line"><span class="tc">0.1–2.7</span><p>Your 6 AM alarm… is also <em>their</em> 6 AM alarm.<span class="dir">Dry and knowing, slightly amused. Small pause after the first "alarm". Lean on "their".</span></p></div>
+    <div class="line"><span class="tc">2.9–5.4</span><p>Snooze. Again. Now you're <em>both</em> awake.<span class="dir">Flat and deadpan, a beat between each fragment. "Both" lands like a sigh.</span></p></div>
+    <div class="line"><span class="tc">5.8–7.3</span><p>Only <em>you</em> should feel it.<span class="dir">Turn warmer here; this is the pivot. Slightly slower.</span></p></div>
+    <div class="line"><span class="tc">7.8–10.8</span><p>WristWake's alarm is a <em>vibration</em> — right on your <em>wrist</em>.<span class="dir">Clear and confident, like telling a friend about something useful. Not salesy.</span></p></div>
+    <div class="line"><span class="tc">11.2–13.6</span><p>No ringtone blasting across the room.<span class="dir">Easy pace.</span></p></div>
+    <div class="line"><span class="tc">14.2–16.5</span><p>Just a <em>buzz</em>… not a blast.<span class="dir">Small smile in the voice. Pause about 0.4 s at the ellipsis.</span></p></div>
+    <div class="line"><span class="tc">17.1–19.8</span><p>Five colors. Get yours at <em>wristwake.shop</em>.<span class="dir">Relaxed sign-off, no shouting. Say "wristwake dot shop".</span></p></div>
+  </div>
+  <div class="callout warn"><p>Confirm before generating: the line "WristWake's alarm is a vibration" is only true if the band can alarm by vibration alone. If it also beeps and the beep can't be turned off, change shot 7's line to "Just a vibration on your wrist," and drop "No ringtone".</p></div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>ElevenLabs (paste this text)</h3>
+      <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">Your six A.M. alarm... is also THEIR six A.M. alarm.
+
+Snooze. ... Again. ... Now you're both awake.
+
+Only you should feel it.
+
+WristWake's alarm is a vibration... right on your wrist.
+
+No ringtone blasting across the room.
+
+Just a buzz... not a blast.
+
+Five colors. Get yours at wristwake dot shop.</span></div>
+    </div>
+    <div class="panel">
+      <h3>Settings</h3>
+      <ul>
+        <li><b>Plan:</b> Starter, the cheapest tier that includes a commercial license. Verify the current price and license terms. Cancel after the month.</li>
+        <li><b>Voice:</b> search the Voice Library for "young American male conversational" or "casual social media". Shortlist 3 and preview the first two lines with each.</li>
+        <li><b>Model:</b> the newest expressive model (v3, if shown), or Multilingual v2 for steadier takes.</li>
+        <li><b>Stability</b> 40–50% · <b>Similarity</b> 75–80% · <b>Style</b> 0–15% · <b>Speaker boost</b> on · <b>Speed</b> 0.95–1.0.</li>
+        <li>Generate the full script 3 times. Keep the best take of each line and assemble the lines in CapCut. Export as WAV or MP3 at 44.1 kHz.</li>
+        <li>Check that "WristWake" is pronounced "RIST-wake". If it isn't, write it as "Wrist Wake".</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── MUSIC ───────────────── -->
+<section id="music">
+  <span class="eyebrow">Music</span>
+  <h2>One licensed track, entering on the reveal</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Brief</h3>
+      <ul>
+        <li><b>Genre:</b> lo-fi / chill electronic with a clean kick. Warm keys or pluck. No vocals.</li>
+        <li><b>Tempo:</b> 92–100 BPM. At 96 BPM a beat lasts 0.625 s, so the 1.4 s shots land close to two beats. Nudge cuts onto beats in CapCut.</li>
+        <li><b>Shape:</b> 0–5.6 s has no music; the alarm and room tone carry the tension. At 5.6 the track enters on a downbeat (pick a section that starts with a lift). It stays ducked under the voice, rises in the 17.0–18.8 gap, resolves at 18.8, and fades from 19.8 to 20.5.</li>
+        <li><b>Level:</b> about 20–24 dB under the voice while it speaks, about 12 dB under in gaps. In CapCut that's roughly 15–25% volume under VO and 40% in gaps; trust your ears.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Source and license</h3>
+      <p><b>Pixabay Music</b> (free, iPad browser). Search "lofi morning", "chill beat" or "calm morning". Its content license allows commercial use, including ads. Re-check the license on the track page, and screenshot the page with the date as proof.</p>
+      <p class="muted">Don't use trending TikTok sounds or CapCut library tracks in paid ads unless the track is marked as commercially licensed. A sound being usable in organic posts doesn't make it usable in ads. TikTok's Commercial Music Library and Meta's Sound Collection are the safe in-platform options, but each only covers its own platform.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── SFX ───────────────── -->
+<section id="sfx">
+  <span class="eyebrow">Sound design · Variant B</span>
+  <h2>Sound-effects timeline</h2>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>Time</th><th>Sound</th><th>Purpose</th><th>Level (rel. to VO 0 dB)</th><th>Source</th><th>Sync note</th></tr></thead>
+    <tbody>
+      <tr><td class="tc">0.00–2.90</td><td>Generic smartphone alarm (marimba or beep pattern, <i>not</i> Apple's ringtones)</td><td>The scroll-stopping hook</td><td>−6 dB in shot 1, −14 dB under VO from 0.4 on, −20 dB in shot 2 (muffled)</td><td>Pixabay SFX "phone alarm"</td><td>Start at frame 0, no fade-in</td></tr>
+      <tr><td class="tc">0.00–5.60</td><td>Bedroom room tone</td><td>Realism, bed for silence</td><td>−32 dB</td><td>Pixabay "room tone"</td><td>Continuous under AI shots</td></tr>
+      <tr><td class="tc">1.50</td><td>Sheet rustle</td><td>Mia waking</td><td>−24 dB</td><td>Pixabay "bed sheets"</td><td>On her first movement</td></tr>
+      <tr><td class="tc">2.90</td><td>Fingertip tap on glass + alarm cut</td><td>Snooze beat; the sudden silence is the joke</td><td>−20 dB</td><td>Pixabay "screen tap"</td><td>Alarm ends on the exact frame of the tap</td></tr>
+      <tr><td class="tc">3.20</td><td>Duvet whoosh</td><td>Her pulling the cover over her head</td><td>−22 dB</td><td>Pixabay "fabric"</td><td>Match the motion</td></tr>
+      <tr><td class="tc">4.20–5.60</td><td>Quiet clock tick</td><td>Tension before the pivot</td><td>−30 dB</td><td>Pixabay "clock tick"</td><td>Stop at 5.6</td></tr>
+      <tr><td class="tc">5.30→5.60</td><td>Soft riser into a lamp-switch click</td><td>Marks the turn to the solution</td><td>−22 → −16 dB</td><td>Pixabay "riser soft", "light switch"</td><td>Click on the first lit frame of clip 01</td></tr>
+      <tr><td class="tc">7.85 / 8.75 / 9.65</td><td>Short vibration buzz ×3 (≈0.6 s each)</td><td>Makes "vibration" felt</td><td>−18 dB</td><td>Best: <b>record your real band buzzing</b> with the iPad mic, which is authentic. Otherwise Pixabay "phone vibration" (a creative effect, not the device's own sound).</td><td>Lined up with the 3 bursts in clip 02</td></tr>
+      <tr><td class="tc">10.6–14.0</td><td>Morning ambience (distant birds)</td><td>Calm, contrast with shot 1</td><td>−30 dB</td><td>Pixabay "morning birds"</td><td>Fade in over 0.3 s</td></tr>
+      <tr><td class="tc">12.00</td><td>Soft duvet rustle</td><td>Leo getting up</td><td>−26 dB</td><td>Reuse the fabric sound</td><td>On his movement</td></tr>
+      <tr><td class="tc">14.60</td><td>Faint shimmer</td><td>The glint on the display</td><td>−28 dB</td><td>Pixabay "shimmer"</td><td>Peak as the glint crosses the center</td></tr>
+      <tr><td class="tc">15.50</td><td>Small whoosh</td><td>Into the strap pan</td><td>−26 dB</td><td>Pixabay "whoosh soft"</td><td>Only whoosh in the ad</td></tr>
+      <tr><td class="tc">17.0–18.8</td><td>5 soft clicks</td><td>Rhythm on the color cuts</td><td>−24 dB</td><td>Pixabay "ui click soft"</td><td>One per color change (every 0.36 s)</td></tr>
+      <tr><td class="tc">18.80</td><td>Low soft thump</td><td>Lands the end card</td><td>−20 dB</td><td>Pixabay "soft impact"</td><td>On the cut</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">Download everything from Pixabay Sound Effects (same license as the music). Keep a text file listing every file name and URL.</p>
+</section>
+
+<!-- ───────────────── SUBS ───────────────── -->
+<section id="subs">
+  <span class="eyebrow">Captions · readable without sound</span>
+  <h2>Animated captions</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Style spec</h3>
+      <ul>
+        <li><b>Font:</b> Montserrat ExtraBold, or Poppins Bold if Montserrat isn't in your CapCut. Sentence case; highlighted keywords in CAPS.</li>
+        <li><b>Size:</b> cap height about 55–60 px on the 1080-wide canvas. A 4-word line should span about 60–75% of the width.</li>
+        <li><b>Color:</b> white text, 3–4 px black stroke at about 70% opacity plus a soft shadow. Highlight color <span class="mono">#FFC24A</span> (amber, like sunrise).</li>
+        <li><b>Position:</b> center at y ≈ 1400 px (73% from the top) on every shot. This stays above the TikTok and Reels bottom UI, clears every display close-up, and sits in the end card's clear lower third. Keep text within x 140–940 px, clear of the right-hand button column.</li>
+        <li><b>Grouping:</b> 1–5 words per caption, one line preferred, never more than two.</li>
+        <li><b>Animation:</b> words pop in at 90%→100% scale with opacity 0→1 over about 4 frames. Highlighted words get a 108% scale "punch". No bouncing and no per-letter effects.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>CapCut iPad steps</h3>
+      <ol>
+        <li>Once your VO is on the timeline: <b>Text → Auto captions</b>, language English, source "Voiceover" only.</li>
+        <li>Open <b>Edit captions</b> and correct every word against the transcript below. Write "6 AM" and "wristwake.shop" exactly.</li>
+        <li>Split long captions so they match the groups below.</li>
+        <li>Pick a caption <b>style/template with active-word highlight</b> (recent versions offer this). Then set font, stroke and position once. CapCut applies them to all captions.</li>
+        <li>Recolor only the highlighted keywords: select the caption, select the word, set the color to #FFC24A.</li>
+        <li>Play at 0.5× and check every word appears on its syllable. Drag the caption edges to fix timing.</li>
+        <li>If a caption style shows a Pro badge, swap it for a free one so the export isn't blocked.</li>
+      </ol>
+      <p class="muted">The .srt files in <span class="mono">wristwake-ad/subtitles/</span> are a timing reference, and CapCut on desktop can import them directly. Timings here are estimates; your generated VO decides the final timing.</p>
+    </div>
+  </div>
+  <h3>Word-level timing · Variant B (estimate)</h3>
+  <div class="words"><span class="w"><b>Your</b><i>0.10–0.34</i></span><span class="w"><b>6</b><i>0.34–0.58</i></span><span class="w"><b>AM</b><i>0.58–0.82</i></span><span class="w"><b>alarm…</b><i>0.82–1.30</i></span><span class="w"><b>is</b><i>1.45–1.61</i></span><span class="w"><b>also</b><i>1.61–1.92</i></span><span class="w hl"><b>THEIR</b><i>1.92–2.08</i></span><span class="w"><b>6</b><i>2.08–2.23</i></span><span class="w"><b>AM</b><i>2.23–2.39</i></span><span class="w"><b>alarm.</b><i>2.39–2.70</i></span><span class="w"><b>Snooze.</b><i>2.90–3.35</i></span><span class="w"><b>Again.</b><i>3.55–4.00</i></span><span class="w"><b>Now</b><i>4.30–4.52</i></span><span class="w"><b>you&#x27;re</b><i>4.52–4.74</i></span><span class="w hl"><b>BOTH</b><i>4.74–4.96</i></span><span class="w"><b>awake.</b><i>4.96–5.40</i></span><span class="w"><b>Only</b><i>5.80–6.30</i></span><span class="w hl"><b>YOU</b><i>6.30–6.55</i></span><span class="w"><b>should</b><i>6.55–6.80</i></span><span class="w"><b>feel</b><i>6.80–7.05</i></span><span class="w"><b>it.</b><i>7.05–7.30</i></span><span class="w"><b>WristWake&#x27;s</b><i>7.80–8.37</i></span><span class="w"><b>alarm</b><i>8.37–8.75</i></span><span class="w"><b>is</b><i>8.75–8.94</i></span><span class="w"><b>a</b><i>8.94–9.13</i></span><span class="w hl"><b>VIBRATION</b><i>9.13–9.70</i></span><span class="w"><b>right</b><i>9.85–10.09</i></span><span class="w"><b>on</b><i>10.09–10.33</i></span><span class="w"><b>your</b><i>10.33–10.56</i></span><span class="w hl"><b>WRIST.</b><i>10.56–10.80</i></span><span class="w"><b>No</b><i>11.20–11.42</i></span><span class="w"><b>ringtone</b><i>11.42–11.86</i></span><span class="w"><b>blasting</b><i>11.86–12.30</i></span><span class="w"><b>across</b><i>12.40–13.00</i></span><span class="w"><b>the</b><i>13.00–13.30</i></span><span class="w"><b>room.</b><i>13.30–13.60</i></span><span class="w"><b>Just</b><i>14.20–14.50</i></span><span class="w"><b>a</b><i>14.50–14.80</i></span><span class="w hl"><b>BUZZ…</b><i>14.80–15.10</i></span><span class="w"><b>not</b><i>15.50–15.83</i></span><span class="w"><b>a</b><i>15.83–16.17</i></span><span class="w"><b>blast.</b><i>16.17–16.50</i></span><span class="w"><b>Five</b><i>17.10–17.37</i></span><span class="w"><b>colors.</b><i>17.37–17.90</i></span><span class="w"><b>Get</b><i>18.10–18.31</i></span><span class="w"><b>yours</b><i>18.31–18.52</i></span><span class="w"><b>at</b><i>18.52–18.74</i></span><span class="w hl"><b>WRISTWAKE.SHOP</b><i>18.74–19.80</i></span></div>
+</section>
+
+<!-- ───────────────── EDIT ───────────────── -->
+<section id="edit">
+  <span class="eyebrow">Assembly</span>
+  <h2>CapCut timeline</h2>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>Track</th><th>Contents (in order)</th></tr></thead>
+    <tbody>
+      <tr><td><b>V1 main</b></td><td>AI-1 (0–1.4) · AI-2 (1.4–4.2, one take split in two) · AI-3 (4.2–5.6) · 01 reveal (5.6–7.6) · 02 vibration (7.6–10.6) · AI-4 (10.6–14.0) · 03 display (14.0–15.5, in-point 0.6 s) · 04 strap at 2× (15.5–17.0) · 05 carousel at 1.67× (17.0–18.8) · 06 end card, last 1.7 s (18.8–20.5)</td></tr>
+      <tr><td><b>Overlay 1</b></td><td>CTA text "wristwake.shop" at 18.8: Montserrat ExtraBold, white, about 90 px, at y ≈ 1400, popping in. Small line above it: "5 colors". No price.</td></tr>
+      <tr><td><b>Overlay 2</b></td><td>Disclosure "Dramatization · AI-generated scenes" in 26 px white at 70% opacity, top left at y ≈ 280, during the AI shots</td></tr>
+      <tr><td><b>Text</b></td><td>Auto captions (styled as above)</td></tr>
+      <tr><td><b>Audio 1</b></td><td>Voiceover, one clip per line, placed at the times in the script</td></tr>
+      <tr><td><b>Audio 2</b></td><td>Music from 5.6 s; volume keyframes for ducking</td></tr>
+      <tr><td><b>Audio 3–4</b></td><td>SFX from the timeline above. Mute the original audio on every AI clip.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Project setup</h3>
+      <ul>
+        <li>New project → ratio <b>9:16</b>; set resolution 1080p and 30 fps at export.</li>
+        <li>Build in this order: VO first, then picture cut to the VO, then SFX, music, captions, and grading last.</li>
+        <li>Kling clips: use "Canvas fill" so they fill the 9:16 frame (no black bars). Zoom them by 102% to hide edge warping.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Color</h3>
+      <ul>
+        <li>Shots 1–4: cool. Temp −10, saturation −10, slight fade. Keep faces natural.</li>
+        <li>Shot 7: warm. Temp +10, highlights −5.</li>
+        <li>Product clips: no filter. Your renders are the reference for product color; never tint the band.</li>
+        <li>Add light grain (about 10) to the AI shots only, which hides the AI smoothness.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── MIX ───────────────── -->
+<section id="mix">
+  <span class="eyebrow">Audio mix &amp; export</span>
+  <h2>Mix, export and pre-launch check</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Mix</h3>
+      <ul>
+        <li>The voice is king: normalize it so the loudest words sit around −6 dBFS. Use CapCut's noise reduction only if you hear hiss.</li>
+        <li>Ducking: put volume keyframes on the music about 0.2 s before each VO line (down) and 0.2 s after it (up). If your CapCut shows an auto-ducking option, use that instead.</li>
+        <li>No sudden jumps: give every SFX and music edit at least a 2–3 frame fade, except the deliberate alarm cut at 2.9 s.</li>
+        <li>Target about −14 LUFS integrated with true peak at −1 dBTP or lower. Platforms normalize differently, so treat this as a sensible reference, not a rule. CapCut on iPad has no loudness meter. To measure, open the export on a computer with the free Youlean Loudness Meter. Otherwise check by ear on an iPhone speaker at 50% volume and on earbuds: no clipping, and every word clear.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Export</h3>
+      <ul>
+        <li>1080p · 30 fps · bitrate "Higher" (or about 12–16 Mbps) · H.264 · SDR (HDR off).</li>
+        <li>Export one master file per variant: <span class="mono">WW_B_partner_v1.mp4</span>, and so on.</li>
+        <li>Watch the export on your phone in the TikTok and Instagram upload preview (don't post). Check that captions clear the UI, the first frame isn't black, and the audio starts at frame 0.</li>
+      </ul>
+      <h3>Pre-launch checklist</h3>
+      <ul class="check">
+        <li>Every product claim matches the supplier spec</li>
+        <li>No AI frame shows a fake band or watch</li>
+        <li>Disclosure text visible on AI shots</li>
+        <li>Music and SFX license screenshots saved</li>
+        <li>Watched once muted: the story still reads</li>
+        <li>wristwake.shop opens the product page on mobile and checkout works</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── VARIANTS ───────────────── -->
+<section id="variants">
+  <span class="eyebrow">Three variants, one shoot</span>
+  <h2>Variants A, B and C</h2>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th></th><th>B · Partner <span class="tag good">lead</span></th><th>A · Oversleeping</th><th>C · Product demo</th></tr></thead>
+    <tbody>
+      <tr><td><b>Audience</b></td><td>Couples, shift workers, shared rooms</td><td>Students, snoozers, 18–30</td><td>Broad; curious and gift buyers</td></tr>
+      <tr><td><b>Hook</b></td><td>"Your 6 AM alarm… is also their 6 AM alarm."</td><td>"POV: you set FIVE alarms… and still woke up late."</td><td>"This alarm doesn't RING."</td></tr>
+      <tr><td><b>Opening visual</b></td><td>AI-1 phone blazing</td><td>Screen recording of your own Clock app listing 6:00 / 6:05 / 6:10 / 6:15 / 6:20, scrolling (free, no AI)</td><td>Clip 02 vibration pulse in pink, silent then buzz</td></tr>
+      <tr><td><b>Voiceover</b></td><td>See script</td><td>POV: you set five alarms… and still woke up late. · Maybe your alarm is in the wrong place. · WristWake puts it on your wrist, as a vibration. · Set it before bed… and feel your alarm, not just hear it. · Five colors. Get yours at wristwake.shop.</td><td>This alarm doesn't ring. · It vibrates, right on your wrist. · So your alarm doesn't wake the whole room. · Set your alarm. Wear it to bed. · Adjustable strap, classic buckle. · Five colors. · Get yours at wristwake.shop.</td></tr>
+      <tr><td><b>Shots</b></td><td>As storyboarded</td><td>Clock recording (0–2.8) · AI-5 (2.8–5.0) · AI-1 reused (5.0–7.6) · 01 + 02 (7.6–11.0) · 03 display with 23:59, "set it before bed" (11.0–14.0) · AI-4 (14.0–17.0) · 05 + 06</td><td>02 pink (0–2.5) · 01 (2.5–5.5) · AI-4 (5.5–8.5) · 03 (8.5–11.5) · 04 (11.5–14.5) · 05 (14.5–17.5) · 06 (17.5–20)</td></tr>
+      <tr><td><b>Key benefit</b></td><td>Only you feel the alarm</td><td>An alarm on your body rather than across the room</td><td>A silent, wearable alarm in 5 colors</td></tr>
+      <tr><td><b>CTA</b></td><td colspan="3">"Get yours at wristwake.shop" with on-screen URL. No fake urgency.</td></tr>
+      <tr><td><b>Extra cost</b></td><td>4 AI clips</td><td>+1 AI clip (AI-5)</td><td>None</td></tr>
+      <tr><td><b>Hypothesis</b></td><td>A concrete social pain plus an obvious product fit gives the best click-to-purchase rate</td><td>A bigger, more universal pain gives the best hook rate, but buyers may doubt the product</td><td>Showing the product at once gives a lower hook rate but the best CTR among people who stay</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">SRT files for all three are in <span class="mono">wristwake-ad/subtitles/</span>. Cheap extra test: re-cut B with hook 2 ("wakes everyone except you") as a fourth ad. It only needs a new first VO line.</p>
+</section>
+
+<!-- ───────────────── BLENDER ───────────────── -->
+<section id="blender">
+  <span class="eyebrow">Later, when you're at your PC</span>
+  <h2>Where Blender would improve the ad</h2>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>Priority</th><th>Shot</th><th>Limit of photos</th><th>Blender upgrade</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag bl">1</span></td><td>Shot 7 · calm wake-up (AI-4)</td><td>We never see the band on a wrist, so the payoff relies on the voiceover</td><td>Render the band alone on a transparent background (PNG sequence, Film → Transparent) at the wrist angle of a frame from AI-4. Composite it in CapCut with an overlay and a slight blur, or render a close-up on a simple hand or wrist model. This is the single biggest upgrade.</td></tr>
+      <tr><td><span class="tag bl">2</span></td><td>Shot 6 · vibration</td><td>The motion is a 2D jitter of a still image</td><td>Real micro-oscillation of the model (noise modifier on the rotation, about 0.3°, in bursts) with motion blur on. Optionally a slow 30° turntable.</td></tr>
+      <tr><td><span class="tag bl">3</span></td><td>Shot 8 · display close-up</td><td>The photo is upscaled about 1.5×, so it's slightly soft. It also shows 23:59.</td><td>Macro render (85–100 mm lens, f/2.8 depth of field) at full 1080×1920 resolution, and if you like, a display reading 06:00. Only show a time; don't add screen icons the real device doesn't have.</td></tr>
+      <tr><td><span class="tag bl">4</span></td><td>New · color lineup</td><td>We can't show all five colors in one frame</td><td>Five bands in a row, gentle dolly, for the "Five colors" beat.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">Render settings when the time comes: Cycles, 128–256 samples plus denoise, Filmic or AgX, 1080×1920, 30 fps, PNG sequence, then assemble in CapCut. I can write Blender Python scripts for the turntable, vibration bursts and lineup once you share the .blend file's object names.</p>
+</section>
+
+<!-- ───────────────── TEST ───────────────── -->
+<section id="test">
+  <span class="eyebrow">Paid test</span>
+  <h2>A conservative test plan</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Step 0 · before spending (free)</h3>
+      <ul class="check">
+        <li>Price at €34.99 (or at least €29.99)</li>
+        <li>Product page: a 3-step "How it works", the real specs (alarm setup, charging, battery), delivery time, returns, FAQ, the 5 color photos and one video</li>
+        <li>Meta pixel plus Conversions API through Shopify's "Facebook &amp; Instagram" app with data sharing set to Maximum. Then place a test purchase and confirm it in Events Manager.</li>
+        <li>UTM tags on every ad, so Shopify's own reports can confirm Meta's numbers</li>
+        <li>Post all 3 variants organically on TikTok and Instagram. Free retention data: compare average watch time and 3-second retention per hook.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Step 1 · Meta only, about €90 cap</h3>
+      <ul>
+        <li>Why not TikTok Promote: it optimizes for views and followers, not purchases. That probably explains why the €76 you spent there brought no sales.</li>
+        <li>Sales campaign, purchase conversion goal, Germany, ages 22–45, broad targeting with no interests, Advantage+ placements limited to Reels and Stories.</li>
+        <li>3 ad sets × 1 ad (B, A, C) × €7/day × 4 days ≈ €84.</li>
+        <li>With this budget Meta won't leave its learning phase. Treat it as a <b>creative test</b> that finds the best hook and click. It won't prove profitability.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tbl wide">
+  <table>
+    <thead><tr><th>Metric</th><th>How to read it</th><th>Rule of thumb (heuristic, not data)</th></tr></thead>
+    <tbody>
+      <tr><td>Hook rate</td><td>3-second views ÷ impressions</td><td>Under ~20% after €10: the first 2 seconds failed. Swap the hook and keep the rest.</td></tr>
+      <tr><td>Hold rate</td><td>ThruPlays (or 15 s views) ÷ 3-second views</td><td>Low hold with a good hook: the middle drags. Tighten shots 2–4.</td></tr>
+      <tr><td>Link CTR</td><td>Link clicks ÷ impressions</td><td>Under ~0.8% after 2,000 impressions: weak offer or CTA</td></tr>
+      <tr><td>CPC · landing-page views</td><td>Spend ÷ link clicks; LPV ÷ clicks</td><td>LPV/clicks under ~70%: the page loads slowly on mobile</td></tr>
+      <tr><td>Add to cart · checkout</td><td>Per landing-page view</td><td>Clicks without ATC point to the page or price, not the ad</td></tr>
+      <tr><td>CPA · ROAS</td><td>Spend ÷ purchases; revenue ÷ spend</td><td>Compare to break-even: €9.37 / 3.73 (VAT, €34.99) or €14.96 / 2.34 (Kleinunternehmer)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2">
+    <div class="callout warn">
+      <h3>Stop an ad when</h3>
+      <ul>
+        <li>Its spend reaches 1× break-even CPA with 0 add-to-carts</li>
+        <li>Its spend reaches 2× break-even CPA with 0 purchases</li>
+        <li>Hook rate is under ~20% after €10 (re-cut it rather than kill the angle)</li>
+      </ul>
+    </div>
+    <div class="callout ok">
+      <h3>Continue when</h3>
+      <ul>
+        <li>An ad buys at or below break-even CPA. Keep it at the same budget for 7 more days.</li>
+        <li>Scale only after 3–5 purchases at a profitable CPA, raising the budget 20–30% every 3–4 days</li>
+        <li>Never scale on views, likes or clicks alone</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── RULES ───────────────── -->
+<section id="rules">
+  <span class="eyebrow">Compliance</span>
+  <h2>Truth and disclosure</h2>
+  <ul>
+    <li>No testimonials, reviews, star ratings or "customers say". Leo and Mia are presented as a dramatization, never as customers.</li>
+    <li>No promise that WristWake gets anyone up on time. No sleep or health benefits. No unverified specs (battery, waterproofing, materials, the "soft" strap).</li>
+    <li>The screen icons (runner, footsteps, flame) suggest step and calorie functions. Don't mention them until the supplier confirms them.</li>
+    <li>On-screen "Dramatization · AI-generated scenes" during the AI shots. On TikTok, switch on the AI-generated content label. On Meta, use the AI disclosure where Ads Manager offers it. EU AI Act transparency duties for realistic synthetic video started applying in August 2026. Disclosure keeps you on the safe side; this isn't legal advice.</li>
+    <li>Keep license proof for the music, SFX, voice plan and video plan.</li>
+  </ul>
+</section>
+
+<!-- ───────────────── ORDER ───────────────── -->
+<section id="order">
+  <span class="eyebrow">Do this, in this order</span>
+  <h2>Production order and costs</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Steps</h3>
+      <ol>
+        <li>Answer the 3 questions at the top. I'll adjust the scripts if needed.</li>
+        <li>Download the clip kit to the iPad and import it into CapCut.</li>
+        <li>ElevenLabs: generate the VO, pick takes, export. Do this first, because the cut follows the VO.</li>
+        <li>Gemini: still K1, then K2–K5 as edits.</li>
+        <li>Kling: AI-1 to AI-4 (plus AI-5 for Variant A), at most 2 takes each.</li>
+        <li>Pixabay: one music track plus about 12 SFX; screenshot the licenses.</li>
+        <li>CapCut: build B (VO → picture → SFX → music → captions → color).</li>
+        <li>Duplicate the project and re-cut as A and C.</li>
+        <li>Export, check on the phone, run the pre-launch checklist.</li>
+        <li>Fix the product page, pricing and pixel. Post organically, then run the €90 Meta test.</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3>Tools and cost (verify current prices)</h3>
+      <div class="tbl">
+      <table>
+        <thead><tr><th>Tool</th><th>Role</th><th class="num">Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Claude</td><td>Strategy, scripts, prompts, the clip kit, captions, page copy</td><td class="num">have</td></tr>
+          <tr><td>CapCut (free)</td><td>Edit, captions, export</td><td class="num">€0</td></tr>
+          <tr><td>Gemini (free)</td><td>Character stills</td><td class="num">€0</td></tr>
+          <tr><td>Kling, 1 month</td><td>Image-to-video</td><td class="num">≈€10*</td></tr>
+          <tr><td>ElevenLabs Starter, 1 month</td><td>Voice, commercial license</td><td class="num">≈€5–6*</td></tr>
+          <tr><td>Pixabay</td><td>Music and SFX</td><td class="num">€0</td></tr>
+          <tr><td><b>Production total</b></td><td></td><td class="num"><b>≈€15–20</b></td></tr>
+          <tr><td>Meta test</td><td>Ad spend cap</td><td class="num">€90</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="muted">*Based on my last known pricing; check in each app. Cancel both subscriptions after the month unless the test works.</p>
+      <h3>What Claude can't do here</h3>
+      <p class="muted">Render AI video, generate the voice, or run CapCut. Everything else, including the rendered product clips, is done or can be done here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── GERMAN ───────────────── -->
+<section id="de">
+  <span class="eyebrow">Appendix · same picture, German voice</span>
+  <h2>German voiceover (Variant B)</h2>
+  <p>Generate it with the same ElevenLabs voice on a multilingual model and re-run auto captions in German. The picture edit stays the same.</p>
+  <div class="prompt"><button class="copy" type="button">Copy</button><span class="body">Dein Sechs-Uhr-Wecker... ist auch IHR Sechs-Uhr-Wecker.
+
+Snooze. ... Schon wieder. ... Jetzt seid ihr beide wach.
+
+Nur du solltest ihn spüren.
+
+Der Wecker von WristWake vibriert... direkt an deinem Handgelenk.
+
+Kein Klingelton, der durchs ganze Zimmer schallt.
+
+Nur ein Summen... kein Lärm.
+
+Fünf Farben. Hol dir deins auf wristwake punkt shop.</span></div>
+  <p class="muted">"Ihr" means "her" here; for a same-sex or neutral version use "auch der Wecker für alle anderen im Zimmer". German runs about 15% longer, so trim pauses rather than speeding up the voice.</p>
+</section>
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.parentElement.querySelector('.body').innerText;
+    var done=function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1400)};
+    try{navigator.clipboard.writeText(t).then(done,function(){sel(b)})}catch(e){sel(b)}
+  });
+});
+function sel(b){var r=document.createRange();r.selectNodeContents(b.parentElement.querySelector('.body'));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected'}
+</script>
