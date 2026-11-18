@@ -16,10 +16,12 @@ start_s,end_s,word,highlight
 7.34,7.58,"das",
 7.58,7.82,"ganze",
 7.82,8.30,"ZIMMER.",YES
-8.70,9.19,"Wecker",
-9.19,9.68,"stellen.",
-9.68,10.41,"Anlegen.",
-10.41,10.90,"Schlafen.",
+8.70,8.92,"Per",
+8.92,9.14,"Knopf",
+9.14,9.80,"einstellen.",
+9.85,10.11,"KEINE",YES
+10.11,10.38,"APP",
+10.38,10.90,"nötig.",
 11.50,12.00,"Laden",
 12.00,12.50,"direkt",
 12.50,12.75,"per",

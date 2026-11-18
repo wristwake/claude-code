@@ -23,24 +23,24 @@ Jetzt seid ihr BEIDE wach.
 Nur DU solltest ihn spüren.
 
 7
-00:00:07,800 --> 00:00:09,000
-WristWake ist LAUTLOS.
+00:00:07,800 --> 00:00:09,100
+WristWake weckt dich
 
 8
-00:00:09,150 --> 00:00:10,900
-Er vibriert an deinem HANDGELENK.
+00:00:09,200 --> 00:00:10,900
+mit VIBRATION am Handgelenk.
 
 9
 00:00:11,200 --> 00:00:11,900
-Kein Klingelton.
+Ohne Klingeln.
 
 10
 00:00:12,000 --> 00:00:12,700
-Kein Piepen.
+Ohne Piepen.
 
 11
 00:00:12,800 --> 00:00:13,700
-Kein DRAMA.
+Ohne DRAMA.
 
 12
 00:00:14,200 --> 00:00:15,200

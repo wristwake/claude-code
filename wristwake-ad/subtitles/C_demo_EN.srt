@@ -19,21 +19,25 @@ So your alarm doesn't
 wake the whole ROOM.
 
 6
-00:00:08,700 --> 00:00:10,900
-Set your alarm. Wear it to bed.
+00:00:08,700 --> 00:00:09,800
+Set it with the buttons.
 
 7
+00:00:09,850 --> 00:00:10,900
+NO APP needed.
+
+8
 00:00:11,500 --> 00:00:13,000
 Charge it straight from USB
 
-8
+9
 00:00:13,100 --> 00:00:14,300
 no dock needed.
 
-9
+10
 00:00:14,700 --> 00:00:16,200
 Five colors.
 
-10
+11
 00:00:17,300 --> 00:00:19,800
 Get yours at WRISTWAKE.SHOP
